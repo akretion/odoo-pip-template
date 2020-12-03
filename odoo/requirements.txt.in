@@ -1,0 +1,11 @@
+-r requirements-find-links.txt
+
+# odoo
+-r /odoo/src/requirements.txt
+-e /odoo/src
+-e /odoo
+
+
+# patched OCA addons
+odoo14-addon-base_jsonify @ git+https://github.com/oca/server-tools@refs/pull/1911/head#subdirectory=setup/base_jsonify
+odoo14-addon-connector @ git+https://github.com/oca/connector@refs/pull/385/head#subdirectory=setup/connector

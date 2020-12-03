@@ -1,0 +1,62 @@
+version: "3.7"
+services:
+  db:
+    user: "${UID}:${UID}"
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=odoo
+    image: postgres:13
+    volumes:
+      - .db/:/var/lib/postgresql/data
+    networks:
+      - local
+  odoo:
+    environment:
+      PYTHONDONTWRITEBYTECODE: "True"
+      MARABUNTA_MODE: prod
+      MARABUNTA_ALLOW_SERIE: "True"
+      LOCAL_USER_ID: $UID
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+      DB_NAME: db
+      DB_HOST: db
+      LIST_DB: "True"
+      DB_FILTER: .*
+      DEMO: "True"
+      ODOO_CONNECTOR_CHANNELS: root:7
+      LIMIT_MEMORY_SOFT: 4294967296
+      LIMIT_MEMORY_HARD: 5368709120
+      LIMIT_TIME_CPU: 4000
+      LIMIT_TIME_REAL: 4800
+      WORKERS: 0
+      SERVER_WIDE_MODULES: web,queue_job
+      ADDITIONAL_ODOO_RC: |-
+        encryption_key_dev=-Zlvw8hr_MHSkS8PLhDpQjtqYDZT-6npSgIeOGA8FUE=
+    build:
+      context: odoo
+      target: dev
+    links:
+      - db
+    volumes:
+      - ./odoo:/odoo
+    networks:
+      - local
+      - traefik
+    labels:
+      - "docky.help=http://${COMPOSE_PROJECT_NAME}.localhost"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`)
+        && PathPrefix(`/longpolling/`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=${COMPOSE_PROJECT_NAME}odoo"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
+      - "docky.main.service=True"
+      #- "docky.user=odoo"
+networks:
+  traefik:
+    external: true
+  local:

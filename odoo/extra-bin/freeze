@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+REQS=/odoo/requirements.txt
+
+cat /odoo/requirements-find-links.txt > $REQS
+
+pip freeze |
+  grep -v -E 'phs|^pkg-resources|pytest|ptvsd' >> $REQS
+

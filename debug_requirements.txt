@@ -1,0 +1,7 @@
+click-odoo>=1.4.2
+click-odoo-contrib>=1.10.1
+# pre-commit>=2.4.0
+ptvsd
+
+pytest==5.4.3
+pytest-odoo==0.6.0

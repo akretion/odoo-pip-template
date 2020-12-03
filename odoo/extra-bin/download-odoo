@@ -1,0 +1,9 @@
+#!/bin/bash -x
+
+odoo_repos_url=https://github.com/odoo/odoo
+odoo_repos_sha=de62d7bae2c466b74b0d9a83398c5f031233afdb
+
+wget $odoo_repos_url/archive/$odoo_repos_sha.zip -O /tmp/odoo.zip
+unzip /tmp/odoo.zip -d /tmp/
+mv /tmp/odoo-$odoo_repos_sha /odoo/src
+rm -rf /tmp/odoo.zip

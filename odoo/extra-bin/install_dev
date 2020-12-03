@@ -1,0 +1,9 @@
+#!/bin/bash -x
+
+python3.6  -m venv /odoo
+# Need last version of pip in order to have the following fix
+# https://github.com/pypa/pip/pull/8817
+#pip install -U pip==20.3
+download-odoo
+pip install -r /odoo/requirements.txt
+pip install -r /odoo/debug_requirements.txt
